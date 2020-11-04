@@ -1,1 +1,1 @@
-# node-js-bme280
+# node-js-bme280-driver
