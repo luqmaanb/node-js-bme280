@@ -1,6 +1,6 @@
 {
     "name": "bme280",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Node js driver for BME280 I2C sensor intended for Linux platforms",
     "main": "bme280.js",
     "repository": {

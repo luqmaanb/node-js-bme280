@@ -1,17 +1,3 @@
-# node-js-bme280-driver
-
-This is a node.js module for the [BME280](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/) developed by Bosch. The sensor reports ambient temperature, relative humidity and atmospheric pressure. The module portable accross linux platforms such as Raspberry Pi and BeagleBone
-
-## Usage
-
-This is not an official node.js module hence it will need to be installed from github.
-
-1. Install the module
-```npm install luqmaanb/node-js-bme280-driver```
-2. Run the example ```sudo node example.js```
-
-## Example
-```js
 // get the bme280 driver
 const BME280 = require('bme280');
 
@@ -44,4 +30,3 @@ bme280.init()
     readSensorData();
   })
   .catch((err) => console.error(`BME280 initialization failed: ${err} `));
-  ```

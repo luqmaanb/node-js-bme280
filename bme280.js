@@ -4,7 +4,7 @@ class bme280Driver {
   constructor(i2cSettings) {
     const i2c = require("i2c-bus");
 
-    const bme280DefaultAddress = 0x76;
+    const bme280DefaultAddress = 0x76; // default i2c address of bme280
     this.t_fine = 0;
 
     this.i2cBusNo =
@@ -17,6 +17,7 @@ class bme280Driver {
         ? i2cSettings.i2cAddress
         : bme280DefaultAddress;
 
+    // bme280 registers
     this.BME280_REG_SOFTRESET = 0xe0;
 
     this.BME280_REG_CAL26 = 0xe1;
@@ -50,17 +51,21 @@ class bme280Driver {
     this.BME280_DIG_H5_REG = 0xe5;
     this.BME280_DIG_H6_REG = 0xe7;
 
-    // OVERSAMPLING DEFINES
+    // oversampling values
     this.BME_OSR_1 = 0x01;
     this.BME_OSR_2 = 0x02;
     this.BME_OSR_4 = 0x03;
     this.BME_OSR_8 = 0x04;
 
-    // DEVICE ID
+    // device id
     this.BME280_REG_CHIPID = 0xd0;
     this.BME280_DEVICE_ID = 0x60;
   }
-
+  /**
+   * This function configures bme280
+   * @returns {string} resolve with sensor id
+   * @returns {string} reject with error
+   */
   init() {
     return new Promise((resolve, reject) => {
       this.i2cBus.readByte(
@@ -106,19 +111,32 @@ class bme280Driver {
     });
   }
 
+  /**
+   * Read temperature, humidity and pressure values from bme280
+   * @returns {object} resolve with javascript object of data
+   * @returns {string} reject if unsuccessful
+   */
   readSensorData() {
     return new Promise((resolve, reject) => {
       if (!this.cal_data) {
-        return reject("You must first call bme280.init()");
+        return reject("did you call bme280.init()?");
       }
       resolve({
-        temperature_C: (Math.round(this.readTemperature() * 100) / 100).toFixed(2),
+        temperature_C: (Math.round(this.readTemperature() * 100) / 100).toFixed(
+          2
+        ),
         humidity: (Math.round(this.readHumidity() * 100) / 100).toFixed(2),
-        pressure_hPa: (Math.round((this.readPressure()/100) * 100) / 100).toFixed(2),
+        pressure_hPa: (
+          Math.round((this.readPressure() / 100) * 100) / 100
+        ).toFixed(2),
       });
     });
   }
 
+  /**
+   * this function retrieves the temperature from bme280
+   * @returns {number} ambient temperature in degree celcius
+   */
   readTemperature() {
     let temperature = 0;
 
@@ -154,6 +172,10 @@ class bme280Driver {
     return temperature;
   }
 
+  /**
+   * this function retrieves the humidity from bme280
+   * @returns {number} actual relative humidity
+   */
   readHumidity() {
     let humidity = 0;
 
@@ -195,7 +217,10 @@ class bme280Driver {
 
     return humidity;
   }
-
+  /**
+   * this function retrieves the pressure from bme280
+   * @returns {number} atmospheric pressure in pascals
+   */
   readPressure() {
     let pressure = BigInt(0);
 
@@ -238,7 +263,9 @@ class bme280Driver {
 
     return Number(pressure);
   }
-
+  /**
+   * This function reads the calibration data on BME280
+   */
   readSensorCoefficients() {
     this.cal_data = {
       dig_T1: this.i2cBus.readWordSync(this.i2cAddress, this.BME280_DIG_T1_REG),
@@ -306,6 +333,11 @@ class bme280Driver {
     };
   }
 
+  /**
+   * This function converts an unsigned number to a signed number
+   * @param  {number} val value to convert
+   * @returns {number} negative equivalent of postive number
+   */
   pos2neg(val) {
     if (val <= 255) {
       if (((val >> 7) & 0x01) == 0x01) {
@@ -319,13 +351,26 @@ class bme280Driver {
     return val;
   }
 
+  /**
+   * This function converts big endian to little endian
+   * @param  {number} val little endian value
+   * @returns  {number} big endian value
+   */
   BE2LE(val) {
     return ((val & 0xff) << 8) | ((val >> 8) & 0xff);
   }
 
+  /**
+   * This function converts 3 byte values into a number
+   * @param  {number} msb most significant byte
+   * @param  {number} lsb middle byte
+   * @param  {number} xlsb least significant byte
+   * @returns {number} converted value
+   */
   uint20(msb, lsb, xlsb) {
     return ((((msb << 8) | lsb) << 8) | xlsb) >> 4;
   }
 }
 
+// make the driver publicly avaiable
 module.exports = bme280Driver;
