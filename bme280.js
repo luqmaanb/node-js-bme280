@@ -122,6 +122,7 @@ class bme280Driver {
         return reject("did you call bme280.init()?");
       }
       resolve({
+<<<<<<< HEAD
         temperature_C: (Math.round(this.readTemperature() * 100) / 100).toFixed(
           2
         ),
@@ -129,6 +130,11 @@ class bme280Driver {
         pressure_hPa: (
           Math.round((this.readPressure() / 100) * 100) / 100
         ).toFixed(2),
+=======
+        temperature_C: (parseFloat(Math.round(this.readTemperature() * 100) / 100).toFixed(2)),
+        humidity: (parseFloat(Math.round(this.readHumidity() * 100) / 100).toFixed(2)),
+        pressure_hPa: (parseFloat(Math.round((this.readPressure()/100) * 100) / 100).toFixed(2)),
+>>>>>>> 6752e9b21afddef04087553244ba92e357eeacb9
       });
     });
   }
