@@ -122,13 +122,13 @@ class bme280Driver {
         return reject("did you call bme280.init()?");
       }
       resolve({
-        temperature_C: (Math.round(this.readTemperature() * 100) / 100).toFixed(
+        temperature_C: Number((Math.round(this.readTemperature() * 100) / 100).toFixed(
           2
-        ),
-        humidity: (Math.round(this.readHumidity() * 100) / 100).toFixed(2),
-        pressure_hPa: (
+        )),
+        humidity: Number((Math.round(this.readHumidity() * 100) / 100).toFixed(2)),
+        pressure_hPa: Number((
           Math.round((this.readPressure() / 100) * 100) / 100
-        ).toFixed(2),
+        ).toFixed(2)),
       });
     });
   }
